@@ -10,10 +10,23 @@ export default function App() {
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false)
   const [wrap, setWrap] = useState(true)
   const [view, setView] = useState<'split' | 'unified'>('split')
-  const [dark, setDark] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const [dark, setDark] = useState(() => {
+    try {
+      const stored = localStorage.getItem('theme')
+      if (stored) return stored === 'dark'
+    } catch {
+      // localStorage unavailable (e.g. some file:// contexts) — fall through to system preference.
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark)
+    try {
+      localStorage.setItem('theme', dark ? 'dark' : 'light')
+    } catch {
+      // localStorage unavailable — theme just won't persist.
+    }
   }, [dark])
 
   const diff = useMemo(

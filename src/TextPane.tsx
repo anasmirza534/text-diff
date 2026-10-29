@@ -10,6 +10,7 @@ type Props = {
 export default function TextPane({ label, value, onChange, wrap }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   async function loadFile(file: File) {
     onChange(await file.text())
@@ -60,12 +61,19 @@ export default function TextPane({ label, value, onChange, wrap }: Props) {
         }}
         spellCheck={false}
         placeholder="Paste text or drop a file here..."
-        className={`h-48 flex-1 resize-none rounded-md border p-3 font-mono text-sm outline-none
+        className={`resize-none rounded-md border p-3 font-mono text-sm outline-none
           bg-white text-neutral-900 border-neutral-300 placeholder:text-neutral-400 focus:border-neutral-400
           dark:bg-neutral-900 dark:text-neutral-100 dark:border-neutral-700 dark:placeholder:text-neutral-500
+          ${expanded ? 'h-96' : 'h-48'}
           ${wrap ? 'whitespace-pre-wrap' : 'whitespace-pre overflow-x-auto'}
           ${dragOver ? 'ring-2 ring-blue-400' : ''}`}
       />
+      <button
+        onClick={() => setExpanded((e) => !e)}
+        className="mt-1 self-center text-xs text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+      >
+        {expanded ? 'Collapse' : 'Expand'}
+      </button>
     </div>
   )
 }
